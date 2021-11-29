@@ -28,9 +28,22 @@
 #' @seealso
 #' checkout_survival  \code{\link{super_survival}}
 #' @importFrom stats cor
+#' @importFrom stats uniroot
 #' @importFrom utils write.csv
 
+# exp=survivaldata
+# survivalrank=survivalrank[1:300,]
+# pcol=4
+# symbolcol=1
+# path='/yourdir/'
+# checkout_survival(exp=survivaldata,
+#                    survivalrank=survivalrank[1:300,],
+#                    pcol=4,
+#                    symbolcol=1,
+#                    path='/yourdir/')
 
+
+rm(list = ls())
 checkout_survival<-function(exp,survivalrank,pcol=4,symbolcol=1,path){
   if(!dir.exists(path))dir.create(path)
   if(length(survivalrank[,symbolcol][grep('^[0-9]',survivalrank[,symbolcol])])!=0){
@@ -38,33 +51,45 @@ checkout_survival<-function(exp,survivalrank,pcol=4,symbolcol=1,path){
     exp<-exp[,survivalrank[survivalrank[,symbolcol]%in%colnames(exp),symbolcol]]
   }
   rownames(survivalrank)<-survivalrank[,symbolcol]
-  survivalrank<-data.frame(survivalrank,confidence=NA)
+  checkout<-data.frame(survivalrank[,c(symbolcol,pcol)],confidence=NA,Covering_multiple=NA,second_p='FALSE')
 
-  for (i in 1:nrow(survivalrank)) {
-    tryCatch({
-      p_value<-survivalrank[i,pcol]
-      target_gene<-survivalrank[i,symbolcol]
-      index<-which(survivalrank[,pcol] <p_value)
+  for (i in 1:nrow(checkout)) {
+
+      p_value<-checkout[i,2]
+      target_gene<-checkout[i,1]
+      index<-which(checkout[,2] <p_value)
       if(length(index)<1){
-        survivalrank[i,'confidence']<-survivalrank[i,pcol]
+        checkout[i,'confidence']<-checkout[i,2]
       }else{
-        symbol<-survivalrank[index,symbolcol]
+        symbol<-checkout[index,1]
 
         data_test<-data.frame(pearson_target_gene=stats::cor(exp[,c(symbol,target_gene)])[,target_gene],
-                              p_value=survivalrank[names(stats::cor(exp[,c(symbol,target_gene)])[,target_gene]),pcol])
+                              p_value=checkout[names(stats::cor(exp[,c(symbol,target_gene)])[,target_gene]),2])
         data_test<-data.frame(data_test,additional_P_value=10^(log10(data_test[,2])*abs(data_test[,1])))
         data_test<-data.frame(data_test,Reciprocal=1/data_test[,3])
 
+        cover<-sum(data_test[index,'Reciprocal'])/data_test[target_gene,'Reciprocal']
+        checkout[i,'Covering_multiple']<-cover
 
         if(sum(data_test[index,'Reciprocal'])/data_test[target_gene,'Reciprocal']>=1){
-          survivalrank[i,'confidence']<-'Need to test'
+          checkout[i,'confidence']<-'Need to test'
         }else{
-          survivalrank[i,'confidence']<-1/(data_test[target_gene,'Reciprocal']-sum(data_test[index,'Reciprocal']))
+          checkout[i,'confidence']<-1/(data_test[target_gene,'Reciprocal']-sum(data_test[index,'Reciprocal']))
+        }
 
+        fuc<-function(x,y){return(
+          log(10^(-x),base = 1-10^(-x))/10^x-y
+        )}
+        tryCatch({
+        root<-stats::uniroot(fuc,c(0,-log10(checkout[i,2])),y=cover)
+        x<-root$root
+        second<-10^(log10(checkout[i,2])+x)
+        checkout[i,'second_p'] <-second}
+        ,error=function(e){
+          print(paste0(checkout[i,1],'make mistake'))
+        })
         }
       }
-    }
-    ,error=function(e){print(survivalrank[i,symbolcol],'make mistakes')})
-  }
-  utils::write.csv(survivalrank,file =  paste0(path,'checkout.csv',''))
+
+  utils::write.csv(checkout,file =  paste0(path,'checkout.csv',''))
 }

@@ -1,7 +1,7 @@
 #' @title
 #' Batch survival analysis
 #' @description
-#' The super_survival() is the frist function of package survival666.
+#' The super_survival is the frist function of package survival666.
 #' You can use the function to perform batch operations on the gene expression
 #' matrix to obtain the survival analysis of the entire transcriptome
 #' @param exp Gene expression matrix .We need to use the count matrix here.Note
@@ -10,7 +10,7 @@
 #' as the row name is consistent with the gene expression matrix
 #' @param status living status of patient in survival analysis,You need to make sure the sample
 #' as the row name is consistent with the gene expression matrix too.
-#' @param pval Full in the minimum significance you can accpet here.It depend
+#' @param p Full in the minimum significance you can accpet here.It depend
 #' on your need, but the number should not be too big,too broad results are meaningless.
 #' @param title Give a name to the file to be output
 #' @param path Set a save path for the output file
@@ -19,7 +19,7 @@
 #' \dontrun{super_survival(exp=survivaldata,
 #' time = clinic[,3],
 #' status = clinic[,2],
-#' pval = 0.0001,
+#' p = 0.0001,
 #' title = 'survival_rank',
 #' path = '/yourdir/')}
 #' @importFrom survminer surv_cutpoint
@@ -36,7 +36,7 @@
 super_survival<-function(exp,
                          time,
                          status,
-                         pval=0.0001,
+                         p=0.0001,
                          title='survival_rank',
                          path){
   if(!dir.exists(path))dir.create(path)
@@ -64,7 +64,7 @@ super_survival<-function(exp,
       surv_res = matrix(c(as.numeric(table(data_for_surv_final$exp)), pval, cox_res), nrow = 1)
       colnames(surv_res) = c("Num_Low", "Num_High", "Log-rank p", "coef", "HR", "Cox p", "Lower95%", "Upper95%")
 
-      if (surv_res[1,3]<pval) {
+      if (surv_res[1,3]<p) {
         utils::write.table(data.frame(Symbol = colnames(exp)[i],surv_res),
                            file = paste0(path,  "surv_res.txt"),
                            row.names = F, col.names = F,

@@ -1,5 +1,5 @@
 Package: survival666
-Version: 0.1
+Version: 0.5
 Title: Eliminate the Influence of Co-Expression Genes on Target Genes
 Description: Functions can be used for batch survival analysis, 
 	but not only for it. Most importantly, it can verify any
@@ -20,7 +20,7 @@ RoxygenNote: 7.1.2
 Config/testthat/edition: 3
 LazyData: true
 NeedsCompilation: no
-Packaged: 2021-11-24 05:03:07 UTC; 86157
+Packaged: 2021-11-28 04:10:06 UTC; 86157
 Author: Honglu Zhang [aut, cre, cph] (<https://orcid.org/0000-0002-4844-5004>),
   Qi Zhang [ctb] (<https://orcid.org/0000-0012-0199-6968>),
   Xiaodong Pei [ctb] (<https://orcid.org/0000-0002-7897-4505>),
@@ -28,4 +28,4 @@ Author: Honglu Zhang [aut, cre, cph] (<https://orcid.org/0000-0002-4844-5004>),
   Enpeng Liu [ctb] (<https://orcid.org/0000-0002-5549-957X>)
 Maintainer: Honglu Zhang <15738817548@163.com>
 Repository: CRAN
-Date/Publication: 2021-11-24 08:50:02 UTC
+Date/Publication: 2021-11-29 08:50:05 UTC

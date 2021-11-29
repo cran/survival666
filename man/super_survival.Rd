@@ -4,7 +4,7 @@
 \alias{super_survival}
 \title{Batch survival analysis}
 \usage{
-super_survival(exp, time, status, pval = 1e-04, title = "survival_rank", path)
+super_survival(exp, time, status, p = 1e-04, title = "survival_rank", path)
 }
 \arguments{
 \item{exp}{Gene expression matrix .We need to use the count matrix here.Note
@@ -16,7 +16,7 @@ as the row name is consistent with the gene expression matrix}
 \item{status}{living status of patient in survival analysis,You need to make sure the sample
 as the row name is consistent with the gene expression matrix too.}
 
-\item{pval}{Full in the minimum significance you can accpet here.It depend
+\item{p}{Full in the minimum significance you can accpet here.It depend
 on your need, but the number should not be too big,too broad results are meaningless.}
 
 \item{title}{Give a name to the file to be output}
@@ -24,7 +24,7 @@ on your need, but the number should not be too big,too broad results are meaning
 \item{path}{Set a save path for the output file}
 }
 \description{
-The super_survival() is the frist function of package survival666.
+The super_survival is the frist function of package survival666.
 You can use the function to perform batch operations on the gene expression
 matrix to obtain the survival analysis of the entire transcriptome
 }
@@ -32,7 +32,7 @@ matrix to obtain the survival analysis of the entire transcriptome
 \dontrun{super_survival(exp=survivaldata,
 time = clinic[,3],
 status = clinic[,2],
-pval = 0.0001,
+p = 0.0001,
 title = 'survival_rank',
 path = '/yourdir/')}
 }

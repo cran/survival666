@@ -66,9 +66,7 @@ survival_pie<-function(exp,survivalrank,target,pcol=4,symbolcol=1,path){
         data_test<-data.frame(data_test,Reciprocal=1/data_test$additional_P_value)
 
 
-        if(sum(data_test[index,'Reciprocal'])/data_test[target_gene,'Reciprocal']>=1){
-          print(i,'Need to test')
-        }else{
+
           data_test<-data_test[order(data_test$Reciprocal,decreasing = T ),]
           utils::write.csv(data_test,paste0(path,i,'_check_procedure.csv',sep=''))
           dt1<-data.frame(
@@ -78,8 +76,9 @@ survival_pie<-function(exp,survivalrank,target,pcol=4,symbolcol=1,path){
           p1<-ggplot2::ggplot(dt1, ggplot2::aes(x = "", y = dt1[,'Reciprocal'],fill=dt1[,'gene'])) +
             ggplot2::geom_bar(stat = "identity", width = 1) +
             ggplot2::coord_polar(theta = "y") +
-            ggplot2::labs(x = "", y = "", title = "The top ten most interfering genes")
-          ggplot2::ggsave(p1,filename = paste0(path,paste0(i,'p1.pdf',sep=' '),sep=''))
+            ggplot2::labs(x = "", y = "", fill = 'Genes',title = "The top ten most interfering genes")
+
+          ggplot2::ggsave(filename = paste0(path,paste0(i,'p1.pdf')))
           dt2<-data.frame(
             gene=c(paste0('gene ',i),'additional significance'),
             Reciprocal=c(data_test[1,'Reciprocal'],sum(data_test[-1,'Reciprocal']))
@@ -87,11 +86,12 @@ survival_pie<-function(exp,survivalrank,target,pcol=4,symbolcol=1,path){
           p2<-ggplot2::ggplot(dt2, ggplot2::aes(x = "", y = dt2[,'Reciprocal'],fill=dt2[,'gene'])) +
             ggplot2::geom_bar(stat = "identity", width = 1) +
             ggplot2::coord_polar(theta = "y") +
-            ggplot2::labs(x = "", y = "", title = "The interference with target gene")
-          ggplot2::ggsave(p2,filename = paste0(path,paste0(i,'p2.pdf',sep=' '),sep=''))
-        }
+            ggplot2::labs(x = "", y = "", fill = 'Genes',title = "The interference with target gene")+
+
+          ggplot2::ggsave(filename = paste0(path,paste0(i,'p2.pdf')))
+
       }
     }
-    ,error=function(e){print(survivalrank[i,symbolcol],'make mistakes')})
+    ,error=function(e){print(paste0(survivalrank[i,symbolcol],'make mistakes'))})
   }
 }
